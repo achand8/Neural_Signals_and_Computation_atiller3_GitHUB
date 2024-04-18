@@ -1,17 +1,17 @@
 import numpy as np
 import imageio.v2 as io
-import plotly as ploy
+import plotly as ply
+import plotly.graph_objects as plo
 
-ploy.io.renderers.default = "json"
+ply.io.renderers.default = "colab"
 
-plo = ploy.graph_objs
 # Load the video via imageio
 mov = "TEST_MOVIE_00001-small-motion.tif"
 mov_frames = io.imread(mov) # shape: t x width x height
 
 # create a scrollable visualizer for the video via plotly
 fig = plo.Figure(
-    data=[plo.Heatmap(z=mov_frames[0,:,:])],
+    data=[plo.Heatmap(z=mov_frames[0])],
     layout=plo.Layout(
         title="Frame 0",
         updatemenus=[dict(
@@ -20,8 +20,8 @@ fig = plo.Figure(
                           method="animate",
                           args=[None])])]
     ),
-    frames=[plo.Frame(data=[plo.Heatmap(z=mov_frames[i,:,:])],
-            layout=plo.Layout(title_text=f"Frame {i}"))
+    frames=[plo.Frame(data=[plo.Heatmap(z=mov_frames[i])],
+            layout=plo.Layout(dict(title_text=f"Frame {i}")))
             for i in range(1, mov_frames.shape[0])]
 )
 

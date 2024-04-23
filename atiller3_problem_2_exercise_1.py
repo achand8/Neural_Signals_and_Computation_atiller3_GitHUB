@@ -12,6 +12,7 @@ from numpy.fft import ifftshift, ifft2, fft2, fftshift
 import imageio.v2 as io
 from scipy import signal
 import matplotlib.pyplot as plt
+from atiller3_problem_1_exercise_1 import load_tif
 
 # Load the .tif
 mov = "TEST_MOVIE_00001-small-motion.tif" # movie should be in same directory
@@ -38,7 +39,7 @@ def corr2d(frame1,frame2,M,mean_flag=False):
     return corr1.real
 
 # Plot the correlations
-fig,ax = plt.subplots(2,3)
+fig,ax = plt.subplots(2,3,figsize=(9, 6))
 corr_n = [corr2d(3,9,M), corr2d(6,29,M), corr2d(8,27,M),
             corr2d(3,9,M,mean_flag=True), corr2d(6,29,M,mean_flag=True),
                 corr2d(8,27,M,mean_flag=True)]
@@ -49,8 +50,3 @@ for i in np.arange(6):
     axs[i].imshow(corr_n[i],cmap='gray')
 fig.suptitle('Correlations, raw (top row) and mean-centered (bottom row)')
 plt.show()
-print("The correlation peak corresponds the offset between the two frames in frame pairs. \n"
-      "Without mean centering, the peak occurs in the center, and the periphery of the \nimage"
-      " is relatively aligned. With mean centering, the peak occurs in the center\n"
-      "and horizontally, with alignment at the periphery and surrounding the\n"
-      "horizontally-distributed peak.")

@@ -4,18 +4,23 @@ Exercise 1, Part 1
 
 # Import tools
 import numpy as np
-import imageio.v2 as io
-import plotly as ply
 import plotly.express as px
 
-# Play the .tif as a video
-# Load the .tif
-plo = ply.graph_objects
-mov = "TEST_MOVIE_00001-small-motion.tif" # movie should be in same directory
-mov_frames = io.imread(mov) # shape: t x width_pixels x height_pixels
-M = np.array(mov_frames) # M for movie
 
-# Let's observe the first few frames for the wiggle
+def load_tif(mov_name):  # Define function to load the .tif
+    """
+    :param mov_name: string, name of multi-page tif to load
+    :return: movie, ndarray of multipage tif of dims t x width_pixels x height_pixels
+    """
+    import imageio.v2 as io
+    mov_frames = io.imread(mov_name) # shape: t x width_pixels x height_pixels
+    movie = np.array(mov_frames) # M for movie
+    return movie
+
+
+# Let's load the movie and observe the first few frames for the wiggle
+mov = "TEST_MOVIE_00001-small-motion.tif"  # movie should be in same directory
+M = load_tif(mov)
 N = 30
 fig = px.imshow(M[0:N,:,:], animation_frame=0, binary_string=True)
 

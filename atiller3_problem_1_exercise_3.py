@@ -46,11 +46,12 @@ def ROI_mask(summ_img,n_ROI,tolerance=25,preview=False):
     [mask.append(loc_roi_n[roi_len[i]]) for i in range(n_ROI)]
 
     # For looking at ROI, optional
+    col = ['r','c','m','y','b'] # intialize some colors
     if ( preview==True ):
         fig,ax = plt.subplots(1,2); axs = ax.ravel()
         [axs[i].imshow(summ_img,cmap='gray') for i in range(2)]
-        axs[0].set_title('Original Image'); axs[1].set_title(f"Mask Preview, number of ROI: {n_ROI}")
-        [axs[1].plot(mask[i][:,0],mask[i][:,1],'r.') for i in np.arange(n_ROI)]
+        axs[0].set_title('Original Summary Image'); axs[1].set_title(f"Mask Preview, number of ROI: {n_ROI}")
+        [axs[1].plot(mask[i][:,0],mask[i][:,1],col[i]+'.') for i in np.arange(n_ROI)]
         plt.show()
     return mask
 

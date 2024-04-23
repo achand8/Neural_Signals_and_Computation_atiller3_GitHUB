@@ -7,12 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import imageio.v2 as io
 
-print('A good statistic would isolate ROIs from other activity. It would display\n'
-      'relative differences in activity of candidate cell-like hyperintensities\n'
-      'while maintaining a contrasting neutral background. Maybe quantile or \n'
-      'entropy statistics could work for characterizing top bright pixels or\n'
-      'the expected self-information of a distribution, respectively.')
-
 # Load movie as array
 mov = 'TEST_MOVIE_00001-small.tif'  # movie should be in the same directory
 mov_frames = io.imread(mov)  # shape: t x width_pixels x height_pixels
@@ -36,11 +30,3 @@ M_entr = (-M_prob*np.log2(M_prob)).sum(axis=0)  # compute entropy
 ax[1].imshow(M_entr, cmap='gray_r')
 ax[1].set_title('Approach 2: Entropy')
 plt.show()
-
-print('I think a quantile method might be helpful for determining the brightest pixels\n'
-      'from background, but entropy might be helpful to summarize the activity of a pixel\n'
-      'by its expected self-information. My implementation of a quantile approach \n'
-      'produced some cell-like hyperintensities on a dark/uninteresting background, and my\n'
-      'implementation of entropy produced some cell-like hyperintensities, but patterns of \n'
-      'cell activity might also be suppressed, Gaussian noise of the background might have high \n'
-      'entropy and correction is ambiguous, and the colormap was reversed for visualization.')

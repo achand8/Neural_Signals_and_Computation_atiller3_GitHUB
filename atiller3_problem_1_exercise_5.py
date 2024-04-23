@@ -21,42 +21,66 @@ M = np.array(mov_frames).astype('float64')  # M for movie
 # Reshape data to (n_samples x n_features) for sklearn
 M_PCA = M.reshape((M.shape[0],-1)).T
 
-# Run PCA, and view scree plot for features to keep
-PCA_model = PCA(whiten=True)
-M_PCA_run = PCA_model.fit_transform(M_PCA)
+# Run PCA with, and view scree plot for features to search
+# Reshape transformed data into images x time
+n_comp = 8
+PCA_model = PCA(n_components=n_comp, whiten=True, random_state = 0)
+PCA_trfm = PCA_model.fit_transform(M_PCA)
+PCA_comp_imgs = PCA_trfm.reshape(M.shape[0],M.shape[0],-1)
 
 # View scree plot
 pca_var = PCA_model.explained_variance_
-fig,ax = plt.subplots(1,4); axs = ax.ravel()
-axs[0].plot(pca_var); axs[0].set_title('Scree plot, first eigenvector\n '
-                                       'dominates and is likely trivial')
-axs[1].plot(pca_var[1:10]); axs[1].set_title('Scree plot without first eigenvector, \n'
-                                             '3 components seem adequate.')
-# Reconstruct the ROIs using PCA. Use the second component onward and add to subplots
-def PCA_img_recon(PCA_proj, PCA_modl, n_keep, dropFirst=True):
-    """
-    Recostruct image from PCA using n_keep number of components.
-    :param PCA_proj: ndarray, PCA projection
-    :param PCA_modl: model obj, fitted PCA model
-    :param n_keep: keeps up to n_keep number of components. All others will be set to zero.
-    :param dropFirst: drop the first component, if trivial
-    :return: PCA_recon, ndarray of PCA reconstruction using inverse transform method
-    """
-    dims = PCA_proj.shape[1]
-    PCA_recon = PCA_proj.copy(); PCA_recon[:,n_keep+1:] = 0;
-    if (dropFirst==True): # Drop the first component, if trivial
-        PCA_recon[:,0] = 0
-    PCA_recon = PCA_modl.inverse_transform(PCA_recon)
-    PCA_recon = PCA_recon.reshape(dims,dims,-1)
-    return PCA_recon
-
-
-recon1 = PCA_img_recon(M_PCA_run, PCA_model, 1)
-recon3 = PCA_img_recon(M_PCA_run,PCA_model, 3)
-axs[2].imshow(recon1.sum(axis=2), cmap='gray_r'); axs[2].set_title('Second component'
-                                                                        ' only')
-axs[3].imshow(recon3.sum(axis=2), cmap='gray_r'); axs[3].set_title('Second - fourth components'
-                                                                     ' kept')
+fig1,ax1 = plt.subplots(1,2, figsize=(9,6)); axs1 = ax1.ravel()
+axs1[0].plot(pca_var); axs1[0].set_title('Scree plot, first eigenvector\n '
+                                       'dominates')
+axs1[1].plot(pca_var[1:10]); axs1[1].set_title('Scree plot without first eigenvector, \n'
+                                             '3 components seem adequate')
 plt.show()
 
-print('If I choose more PCs, the contrast between the ROIs and background increases.')
+#  Select a transform with ROI mask candidates by manual search over first 4 PCs (Components 2 works here)
+fig2,ax2 = plt.subplots(2,4,figsize=(11,6)); axs2=ax2.ravel()
+for i in range(n_comp):
+    axs2[i].imshow(PCA_comp_imgs[:,:,i],cmap='gray')
+    axs2[i].set_title(f"Component {i+1}")
+plt.show()
+
+# Component 3 has at least two interesting ROI in one component, so let's plot them
+# Use the method from 4.1
+summ_img = PCA_comp_imgs[:,:,2] # Take a PCA result as a summary image
+tolerance = 20; n_ROI = 2;
+summ_img2 = summ_img.copy()
+summ_img2 += abs(summ_img2.min()) # scale the summary image
+summ_img2 = (np.round(summ_img2/summ_img2.max())).astype('int') # binarize the summary image
+loc_roi=np.flip(np.array(np.where(summ_img2==1)),axis=0); N = loc_roi.shape[1]
+loc_roi_cand, loc_roi_n, mask = [],[],[]
+
+# Group "1s" into ROI
+for j in np.arange(N-1):
+    xydist = abs(loc_roi[:,j]-loc_roi[:,j+1])
+    if (xydist.max()>tolerance):
+        loc_roi_n.append(np.array(loc_roi_cand)); loc_roi_cand = []
+    else:
+        loc_roi_cand.append(loc_roi[:,j])
+roi_len = np.argsort([-len(k) for k in loc_roi_n])
+[mask.append(loc_roi_n[roi_len[i]]) for i in range(n_ROI)]
+
+# For looking at ROI, optional
+col = ['r', 'c', 'm', 'y', 'b']  # intialize some colors
+fig3, ax3 = plt.subplots(1, 2);
+axs3 = ax3.ravel()
+[axs3[i].imshow(summ_img, cmap='gray') for i in range(2)]
+axs3[0].set_title('Original Summary Image');
+axs3[1].set_title(f"Mask Preview, number of ROI: {n_ROI}")
+[axs3[1].plot(mask[i][:, 0], mask[i][:, 1], col[i] + '.') for i in np.arange(n_ROI)]
+plt.show()
+
+# Compute time traces
+# Using the masks as indexers on the original video M, form a time trace per ROI
+# Try a rudimentary normalization using quantile. Trends and other fluorescence factors such as bleaching are ignored
+roi_time = np.array([np.quantile(M[:,mask[i][:,0],mask[i][:,1]],q=.8,axis=1) for i in range(n_ROI)])
+fig4,ax4 = plt.subplots(n_ROI,1, figsize=(11,9)); axs4 = ax4.ravel()
+for i in range(n_ROI):
+    axs4[i].plot(roi_time[i],c=col[i])
+    axs4[i].set_title(f"ROI {i+1}")
+fig4.suptitle(rf"{n_ROI} ROI over time")
+plt.show()

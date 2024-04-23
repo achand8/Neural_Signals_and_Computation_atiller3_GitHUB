@@ -40,16 +40,14 @@ roi_len = np.argsort([-len(k) for k in loc_roi_n])
 
 # Compute time traces
 # Using the masks as indexers on the original video M, form a time trace per ROI
-roi_time = [M[:,mask[i][:,0],mask[i][:,1]].mean(axis=1) for i in range(n_ROI)]
+roi_time = np.array([np.quantile(M[:,mask[i][:,0],mask[i][:,1]],q=.8,axis=1) for i in range(n_ROI)])
 
 # Try a rudimentary df/F, where F0 is the median. Other fluorescence effects such as fluorescence
 # trend changes are ignored
-roi_time_df = [(roi_time[i]-np.median(roi_time[i]))/np.median(roi_time[i]) for i in range(n_ROI)]
-fig,ax = plt.subplots(2,3); axs = ax.ravel()
-[axs[i].plot(roi_time_df[i],c='k') for i in range(n_ROI)]
+col = ['r', 'c', 'm', 'y', 'b']  # intialize some colors
+fig,ax = plt.subplots(5,1, figsize=(11,9)); axs = ax.ravel()
+for i in range(n_ROI):
+    axs[i].plot(roi_time[i],c=col[i])
+    axs[i].set_title(f"ROI {i+1}")
 fig.suptitle(rf"{n_ROI} ROI over time")
 plt.show()
-
-print('In this approach, I used the max as indexers on the original video M, formed raw data\n'
-      'consisting of the average pixel over time for an ROI, and then computed a rudimentary\n'
-      'df/F of each time trace, where the F0 was the median of each time trace.')

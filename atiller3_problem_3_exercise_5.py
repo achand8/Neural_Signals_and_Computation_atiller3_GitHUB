@@ -23,8 +23,9 @@ ICA_trfm = ICA_model.fit_transform(M_ICA)
 ICA_comp_imgs = ICA_trfm.reshape(M.shape[0],M.shape[0],-1)
 
 #  Select a transform with ROI mask candidates by manual search (Component 14 works here)
-fig2,ax2 = plt.subplots(1,5,figsize=(7,6)); axs2=ax2.ravel()
+fig2,ax2 = plt.subplots(1,5,figsize=(14,4)); axs2=ax2.ravel()
 for i in range(n_comp):
     axs2[i].imshow(ICA_comp_imgs[:,:,i],cmap='gray_r')
     axs2[i].set_title(f"Component {i+1}")
+fig2.suptitle('ICA components')
 plt.show()

@@ -42,6 +42,7 @@ fig2,ax2 = plt.subplots(2,4,figsize=(11,6)); axs2=ax2.ravel()
 for i in range(n_comp):
     axs2[i].imshow(PCA_comp_imgs[:,:,i],cmap='gray')
     axs2[i].set_title(f"Component {i+1}")
+fig2.suptitle('PCA components')
 plt.show()
 
 # Component 3 has at least two interesting ROI in one component, so let's plot them

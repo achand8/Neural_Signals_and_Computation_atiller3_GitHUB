@@ -13,7 +13,7 @@ mov_frames = io.imread(mov)  # shape: t x width_pixels x height_pixels
 M = np.array(mov_frames)  # M for movie
 
 # Plot the summary images as heatmaps
-fig , ax = plt.subplots(1,3); axs = ax.ravel()
+fig , ax = plt.subplots(1,3, figsize=(11,4.5)); axs = ax.ravel()
 M_stats = [M.mean(axis=0), np.median(M,axis=0), M.var(axis=0)]
 M_label = ['Mean', 'Median', 'Variance']
 axs = ax.ravel()

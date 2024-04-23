@@ -27,4 +27,5 @@ fig2,ax2 = plt.subplots(3,4,figsize=(7,6)); axs2=ax2.ravel()
 for i in range(n_comp):
     axs2[i].imshow(NMF_comp_imgs[:,:,i],cmap='gray')
     axs2[i].set_title(f"Component {i+1}")
+fig2.suptitle('NMF components')
 plt.show()

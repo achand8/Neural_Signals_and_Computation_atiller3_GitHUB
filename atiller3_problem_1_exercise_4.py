@@ -49,5 +49,5 @@ fig,ax = plt.subplots(5,1, figsize=(11,9)); axs = ax.ravel()
 for i in range(n_ROI):
     axs[i].plot(roi_time[i],c=col[i])
     axs[i].set_title(f"ROI {i+1}")
-fig.suptitle(rf"{n_ROI} ROI over time")
+fig.suptitle(rf"{n_ROI} ROI over time, color-coded to ROI of 3.1")
 plt.show()

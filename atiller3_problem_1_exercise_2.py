@@ -22,8 +22,3 @@ for i in np.arange(3):
     axs[i].imshow(M_stats[i],cmap='gray')
 fig.suptitle('Summary image, per pixel')
 plt.show()
-
-print("The mean and median summary images are similar, and some areas of hyperintensity\n"
-      "(maybe cells) can be identified, but there are other bright regions. The variance\n"
-      "summary image isolates hyperintensities (maybe cells) most effectively, but may also\n"
-      "miss cells or cell-like objects.")

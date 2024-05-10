@@ -1,6 +1,5 @@
 # Problem Set 2, #1A
 
-
 # Load tools
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,7 +32,7 @@ def plot_p1a(N, M, alpha=5, draws=1):
     for i in np.arange(sup):
         r,_,_ = poiss_m(N=N, M=M, alpha=alpha, draws=draws)
         axs[i].hist(r)
-        axs[i].set_xlabel('Counts'); axs[i].set_ylabel('p')
+        axs[i].set_xlabel('Bin'); axs[i].set_ylabel('Counts')
     fig.suptitle(f"Distribution of r for $x_{M}$ with N={N}, draws={draws}")
     fig.tight_layout(); plt.show()
 

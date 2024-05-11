@@ -51,4 +51,4 @@ def gp_smoothing(A, l, x):
                                             mu,
                                             cov=cov,size=1)
     # gp_smooth[gp_smooth<0] = 0  # limit gp to whole numbers
-    return gp_smooth.T
+    return gp_smooth.T.reshape(x.size)

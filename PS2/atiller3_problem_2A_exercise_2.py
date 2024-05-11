@@ -52,13 +52,3 @@ def gp_smoothing(A, l, x):
                                             cov=cov,size=1)
     # gp_smooth[gp_smooth<0] = 0  # limit gp to whole numbers
     return gp_smooth.T
-
-
-# Plot the PSTH and some GP-smoothed PSTHs
-# plot_2a(psth,'PSTH')
-A=1.0; l=2e-3
-gp_smooth = np.array([gp_smoothing(A=A, l=l, x=psth[i,:]) for i in np.arange(psth.shape[0])]).reshape(psth.shape)
-plot_2a(gp_smooth,f'PSTH - GP smoothing at A={A}, l={l}')
-# Try out parameters for A and l - looks smoother
-A=4.0; l=5e-2; gp_smooth = np.array([gp_smoothing(A=A, l=l, x=psth[i,:]) for i in np.arange(psth.shape[0])]).reshape(psth.shape)
-plot_2a(gp_smooth,f'PSTH - GP smoothing at A={A}, l={l}')

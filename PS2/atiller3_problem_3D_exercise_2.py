@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io as sio
 from sklearn.decomposition import PCA as pca
-from atiller3_problem_3B_exercise_2 import *
+from atiller3_problem_3C_exercise_2 import *
 
 
 # Compute PCA components
@@ -24,11 +24,3 @@ def plot_evs(x):
     x_evs = compute_pca_evs(x)
     plt.plot(x_evs[0,:],x_evs[1,:])
 
-
-
-edat = sio.loadmat('exampleData.mat')['Data'][0] # edat = exampleData, all X (conditions)
-fig = plt.figure(figsize=[8,8])
-[plot_evs(edat[i][0]) for i in np.arange(len(edat))]
-plt.title(f'PCs of projection'); plt.xlabel('PC1'); plt.ylabel('PC2')
-fig.tight_layout()
-plt.show()

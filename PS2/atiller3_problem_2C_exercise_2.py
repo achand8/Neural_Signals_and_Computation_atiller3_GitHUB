@@ -45,6 +45,8 @@ def plot_spk_train(spk_train,trial):
     for i, spiketrain in enumerate(spk_train[trial-1]):
         plt.plot(spiketrain, np.ones(len(spiketrain)) * i, ls='', marker='|')
     plt.title(f'Spike trains from trial {trial}')
+    plt.ylabel('Neuron')
+    plt.xlabel('Time (ms)')
     plt.tight_layout()
     plt.show()
 
@@ -67,7 +69,7 @@ def plot_trajs(trajs):
     ax = f.add_subplot(1, 1, 1, projection='3d'); c = 'rcbyg'
     [ax.plot(trajs[i][0],trajs[i][1],trajs[i][2],
              c[i%len(c)]) for i in np.arange(len(trajs))]
-    avg_trajs=np.mean(trajs,axis=0); print(avg_trajs.shape)
+    avg_trajs=np.mean(trajs,axis=0)
     ax.plot(avg_trajs[0,:],avg_trajs[1,:],avg_trajs[2,:],c='k',
             linewidth=5.0, label='avg')
     ax.set_title('GPFA per-trial trajectories')

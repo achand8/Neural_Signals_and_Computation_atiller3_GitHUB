@@ -20,12 +20,12 @@ gp_smooth = np.array([gp_smoothing(A=1.0,l=2e-3,x=psth[i,:]) for i in np.arange(
 # Perform PCA on PSTH
 psth_X = psth - psth.mean(axis=1,keepdims=True)
 pca_psth = pca(n_components=psth.shape[0]).fit(psth_X)
-psth_evs = pca_psth.components_[0:3,:]
+psth_evs = pca_psth.components_[:3,:]
 
 # Perform PCA on smoothed PSTH
 gpsth_X = gp_smooth - gp_smooth.mean(axis=1,keepdims=True)
 pca_gpsth = pca(n_components=gp_smooth.shape[0]).fit(gpsth_X)
-gpsth_evs = pca_gpsth.components_[0:3,:]
+gpsth_evs = pca_gpsth.components_[:3,:]
 
 def pc3d(x,x_sm,titles):
     '''

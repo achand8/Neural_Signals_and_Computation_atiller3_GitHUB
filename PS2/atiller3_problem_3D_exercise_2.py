@@ -1,26 +1,34 @@
 # Problem Set 2, #3D
 
-# Load tools
 import numpy as np
-import scipy.io as sio
 import matplotlib.pyplot as plt
-from jPCA import *
+import scipy.io as sio
+from sklearn.decomposition import PCA as pca
+from atiller3_problem_3B_exercise_2 import *
 
-# Load the N x T data
-edat = sio.loadmat('exampleData.mat')['Data'][0]
-reach27 = edat[26][0]; x=reach27
 
-# Run jPCA
-import urllib.request
-data_url = 'https://github.com/nwb4edu/development/blob/0f181c8092d79278fcb0320d9f53bc33fbb0df85/exampleData.mat?raw=true'
-# Get the data and save it locally as "sleep_data.txt"
-path, headers = urllib.request.urlretrieve(data_url, './exampleData.mat')
-edat, times = util.load_churchland_data(path)
+# Compute PCA components
+def compute_pca_evs(x):
+    x-= x.mean(axis=0,keepdims=True)
+    pca_x = pca(n_components=x.shape[0]).fit(x)
+    x_evs = pca_x.components_[:6,:]
+    return x_evs
 
-jpca = jPCA.JPCA(num_jpcs=6)
-# times = np.linspace(-50,550,61)
-projected, full_data_var, pca_var_capt, jpca_var_capt = jpca.fit(edat, times=times, tstart=-50, tend=550)
-fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-util.plot_projections(projected, axis=axes[0], x_idx=0, y_idx=1) # Plot the first jPCA plane
-util.plot_projections(projected, axis=axes[1], x_idx=2, y_idx=3) # Plot the second jPCA plane
+
+def plot_evs(x):
+    """
+    Plot the PCs associated with each dataset of the jPCA datasets
+    :param x_evs: ndarray, PCs from PCA performed on one of the jPCA conditions
+    :return:
+    """
+    x_evs = compute_pca_evs(x)
+    plt.plot(x_evs[0,:],x_evs[1,:])
+
+
+
+edat = sio.loadmat('exampleData.mat')['Data'][0] # edat = exampleData, all X (conditions)
+fig = plt.figure(figsize=[8,8])
+[plot_evs(edat[i][0]) for i in np.arange(len(edat))]
+plt.title(f'PCs of projection'); plt.xlabel('PC1'); plt.ylabel('PC2')
+fig.tight_layout()
 plt.show()
